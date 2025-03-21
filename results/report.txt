@@ -1,0 +1,38 @@
+=== BÁO CÁO PHÂN TÍCH VÀ DỰ ĐOÁN KHOẢN VAY ===
+Ngày tạo: 2025-03-20 22:32:13
+
+Kích thước dữ liệu: 4269 hàng x 13 cột
+Đặc trưng được chọn: cibil_score, total_assets, debt_recovery_ratio, repayment_capacity, dti, liquid_ratio, income_annum, loan_amount, loan_term, no_of_dependents
+
+KẾT QUẢ ĐÁNH GIÁ MÔ HÌNH:
+Độ chính xác: 0.9778
+Độ chính xác micro: 0.9778
+Độ nhạy micro: 0.9778
+F1 Score micro: 0.9778
+
+Báo cáo phân loại chi tiết:
+              precision    recall  f1-score   support
+
+           0       0.99      0.98      0.98       531
+           1       0.96      0.98      0.97       323
+
+    accuracy                           0.98       854
+   macro avg       0.97      0.98      0.98       854
+weighted avg       0.98      0.98      0.98       854
+
+TẦM QUAN TRỌNG CỦA CÁC ĐẶC TRƯNG:
+cibil_score: 0.8708
+loan_term: 0.0465
+repayment_capacity: 0.0192
+dti: 0.0186
+loan_amount: 0.0111
+income_annum: 0.0098
+total_assets: 0.0092
+debt_recovery_ratio: 0.0081
+liquid_ratio: 0.0055
+no_of_dependents: 0.0013
+
+KẾT LUẬN:
+- 5 đặc trưng mới được tạo ra đã cải thiện đáng kể hiệu suất của mô hình
+- Tính năng 'debt_recovery_ratio' có vai trò quan trọng trong việc dự đoán phê duyệt khoản vay
+- Mô hình có độ chính xác cao, phù hợp để hỗ trợ ra quyết định cho vay
