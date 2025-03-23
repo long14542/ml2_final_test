@@ -6,13 +6,13 @@ class Config:
     # Thư mục gốc chứa dự án
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    # Đường dẫn đến file dữ liệu
+    # Path to dataset
     DATA_FILE_PATH = os.path.join(ROOT_DIR, "loan_approval_dataset.csv")
 
-    # Thư mục lưu trữ kết quả đầu ra (biểu đồ, báo cáo, v.v.)
+    # folder with output results
     OUTPUT_DIR = os.path.join(ROOT_DIR, "results")
 
-    # Cấu hình mô hình
+    # Config model
     MODEL_CONFIG = {
         "random_forest": {
             "n_estimators": 100,
@@ -25,13 +25,13 @@ class Config:
         # Có thể thêm cấu hình cho các mô hình khác ở đây
     }
 
-    # Cấu hình cho việc chia dữ liệu
+    # config for spliting data
     TRAIN_TEST_SPLIT = {
         "test_size": 0.2,
         "random_state": 42
     }
 
-    # Cấu hình cho việc biểu diễn đồ thị
+    # config for plot graph
     VISUALIZATION = {
         "figure_size_large": (12, 8),
         "figure_size_medium": (10, 6),
@@ -44,7 +44,7 @@ class Config:
     RANDOM_STATE = 42
     NUM_CV_FOLDS = 5
 
-    # Dành cho 5 đặc trưng mới
+    # Add 5 new features
     NEW_FEATURES_CONFIG = {
         "total_assets": {
             "description": "Tổng giá trị tài sản hiện có của người vay."

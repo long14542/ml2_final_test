@@ -1,6 +1,4 @@
 import os
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import re
@@ -63,7 +61,7 @@ class DataUtils:
         for i, feature in enumerate(self.numerical_features[:6]):  # Chỉ hiển thị tối đa 6 đặc trưng
             plt.subplot(2, 3, i + 1)
             sns.histplot(self.raw_data[feature], kde=True)
-            plt.title(f'Phân bố của {feature}')
+            plt.title(f'Distribution of {feature}')
             plt.tight_layout()
 
         self.plots['distributions'] = plt.gcf()
@@ -75,7 +73,7 @@ class DataUtils:
 
         plt.figure(figsize=(10, 8))
         sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f', linewidths=0.5)
-        plt.title('Ma trận tương quan giữa các đặc trưng số')
+        plt.title('Correlation matrix between numerical features')
         plt.tight_layout()
 
         self.plots['correlation'] = plt.gcf()
@@ -86,7 +84,7 @@ class DataUtils:
         # Biểu đồ đếm cho biến mục tiêu
         plt.figure(figsize=(8, 6))
         sns.countplot(x=self.target_column, data=self.raw_data)
-        plt.title(f'Phân bố biến mục tiêu - {self.target_column}')
+        plt.title(f'Target variable distribution - {self.target_column}')
         plt.tight_layout()
         self.plots['target_distribution'] = plt.gcf()
         plt.close()
@@ -169,6 +167,7 @@ class DataUtils:
         # 3. REPAYMENT_CAPACITY_INDEX
         df['repayment_capacity'] = (df['income_annum'] * 0.5 + df['total_assets'] * 0.3) / \
                                    (df['loan_amount'] / df['loan_term'] + 1e-6)
+        # cộng 1^-6 vào mẫu số để tránh chia cho 0 nếu mẫu số = 0 (vd 50/0 = error)
 
         # 4. LIQUID_ASSETS_RATIO
         df['liquid_ratio'] = (df['bank_asset_value'] + df['commercial_assets_value']) / \
@@ -218,7 +217,7 @@ class DataUtils:
         return X, y, selected_features
 
     def split_data(self, X, y, test_size=0.2, random_state=42):
-        """Chia dữ liệu thành tập huấn luyện và kiểm tra"""
+        """Chia dữ liệu thành tập huấn luyện và kiểm tra (0.2 = 20%)"""
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=test_size, random_state=random_state, stratify=y
         )

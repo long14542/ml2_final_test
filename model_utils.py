@@ -75,9 +75,9 @@ class ModelUtils:
         sns.heatmap(cm, annot=True, fmt="d", cmap='Blues',
                     xticklabels=self.class_names,
                     yticklabels=self.class_names)
-        plt.xlabel('Giá trị Dự đoán')
-        plt.ylabel('Giá trị Thực tế')
-        plt.title('Ma trận nhầm lẫn')
+        plt.xlabel('Predict value')
+        plt.ylabel('Actual value')
+        plt.title('Confusion matrix')
 
         self.plots['confusion_matrix'] = plt.gcf()
         plt.close()
@@ -98,9 +98,9 @@ class ModelUtils:
             plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
             plt.xlim([0.0, 1.0])
             plt.ylim([0.0, 1.05])
-            plt.xlabel('Tỉ lệ Dương tính Giả (FPR)')
-            plt.ylabel('Tỉ lệ Dương tính Thật (TPR)')
-            plt.title('Đường cong ROC')
+            plt.xlabel('False Positive Rate (FPR)')
+            plt.ylabel('True Positive Rate (TPR)')
+            plt.title('ROC curve')
             plt.legend(loc="lower right")
 
             self.plots['roc_curve'] = plt.gcf()
@@ -123,7 +123,7 @@ class ModelUtils:
             plt.ylim([0.0, 1.05])
             plt.xlabel('Recall')
             plt.ylabel('Precision')
-            plt.title('Đường cong Precision-Recall')
+            plt.title('Precision-Recall curve')
             plt.legend(loc="lower left")
 
             self.plots['precision_recall_curve'] = plt.gcf()
@@ -138,7 +138,7 @@ class ModelUtils:
         indices = np.argsort(importances)[::-1]
 
         plt.figure(figsize=(10, 8))
-        plt.title('Tầm quan trọng của các đặc trưng')
+        plt.title('The importance of features')
         plt.bar(range(len(importances)), importances[indices], align='center')
         plt.xticks(range(len(importances)), [feature_names[i] for i in indices], rotation=90)
         plt.tight_layout()
@@ -162,17 +162,17 @@ class ModelUtils:
         test_scores_std = np.std(test_scores, axis=1)
 
         plt.figure(figsize=(10, 6))
-        plt.title('Đường cong học tập')
-        plt.xlabel('Số lượng mẫu huấn luyện')
-        plt.ylabel('Điểm số')
+        plt.title('Learning curve')
+        plt.xlabel('Number of training samples')
+        plt.ylabel('Score')
         plt.grid()
 
         plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
                          train_scores_mean + train_scores_std, alpha=0.1, color="r")
         plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
                          test_scores_mean + test_scores_std, alpha=0.1, color="g")
-        plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Điểm huấn luyện")
-        plt.plot(train_sizes, test_scores_mean, 'o-', color="g", label="Điểm kiểm định chéo")
+        plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training score ")
+        plt.plot(train_sizes, test_scores_mean, 'o-', color="g", label="cross validation score")
         plt.legend(loc="best")
 
         self.plots['learning_curve'] = plt.gcf()

@@ -1,5 +1,5 @@
 === BÁO CÁO PHÂN TÍCH VÀ DỰ ĐOÁN KHOẢN VAY ===
-Ngày tạo: 2025-03-20 22:32:13
+Ngày tạo: 2025-03-22 23:02:21
 
 Kích thước dữ liệu: 4269 hàng x 13 cột
 Đặc trưng được chọn: cibil_score, total_assets, debt_recovery_ratio, repayment_capacity, dti, liquid_ratio, income_annum, loan_amount, loan_term, no_of_dependents
