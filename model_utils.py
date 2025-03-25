@@ -21,10 +21,10 @@ class ModelUtils:
         self.class_names = None
 
     def build_and_train_models(self, X_train, y_train):
-        """Xây dựng và huấn luyện mô hình Random Forest với các tham số chống overfitting"""
+        """Build and train a Random Forest model with anti-overfitting parameters"""
         self.class_names = sorted(np.unique(y_train))
 
-        # Khởi tạo mô hình Random Forest với các tham số tối ưu
+        # Initialize a Random Forest model with optimized parameters
         self.model = RandomForestClassifier(
             n_estimators=100,
             max_depth=5,
@@ -35,21 +35,21 @@ class ModelUtils:
             class_weight='balanced'
         )
 
-        # Huấn luyện mô hình
+        # Train the model
         self.model.fit(X_train, y_train)
 
         return self.model
 
     def evaluate_model(self, X_train, X_test, y_train, y_test):
-        """Đánh giá mô hình trên tập kiểm tra"""
+        """Evaluate the model on the test set"""
         if self.model is None:
-            raise ValueError("Mô hình chưa được huấn luyện. Gọi build_and_train_models trước.")
+            raise ValueError("Model has not been trained. Call build_and_train_models first.")
 
-        # Dự đoán nhãn
+        # Predict labels
         y_train_pred = self.model.predict(X_train)
         y_test_pred = self.model.predict(X_test)
 
-        # Tính các chỉ số đánh giá
+        # Compute evaluation metrics
         metrics = {
             'accuracy': accuracy_score(y_test, y_test_pred),
             'precision_micro': precision_score(y_test, y_test_pred, average='micro'),
@@ -58,15 +58,15 @@ class ModelUtils:
             'classification_report': classification_report(y_test, y_test_pred)
         }
 
-        # Tính ma trận nhầm lẫn
+        # Compute the confusion matrix
         self.conf_matrix = confusion_matrix(y_test, y_test_pred)
 
         return metrics
 
     def plot_confusion_matrix(self, X_test, y_test):
-        """Vẽ ma trận nhầm lẫn"""
+        """Plot the confusion matrix"""
         if self.model is None:
-            raise ValueError("Mô hình chưa được huấn luyện. Gọi build_and_train_models trước.")
+            raise ValueError("Model has not been trained. Call build_and_train_models first.")
 
         y_pred = self.model.predict(X_test)
         cm = confusion_matrix(y_test, y_pred)
@@ -75,7 +75,7 @@ class ModelUtils:
         sns.heatmap(cm, annot=True, fmt="d", cmap='Blues',
                     xticklabels=self.class_names,
                     yticklabels=self.class_names)
-        plt.xlabel('Predict value')
+        plt.xlabel('Predicted value')
         plt.ylabel('Actual value')
         plt.title('Confusion matrix')
 
@@ -83,11 +83,11 @@ class ModelUtils:
         plt.close()
 
     def plot_roc_curve(self, X_test, y_test):
-        """Vẽ đường cong ROC"""
+        """Plot the ROC curve"""
         if self.model is None:
-            raise ValueError("Mô hình chưa được huấn luyện. Gọi build_and_train_models trước.")
+            raise ValueError("Model has not been trained. Call build_and_train_models first.")
 
-        # Nếu bài toán là phân loại nhị phân
+        # If it is a binary classification problem
         if len(self.class_names) == 2:
             y_pred_proba = self.model.predict_proba(X_test)[:, 1]
             fpr, tpr, _ = roc_curve(y_test, y_pred_proba)
@@ -107,11 +107,11 @@ class ModelUtils:
             plt.close()
 
     def plot_precision_recall_curve(self, X_test, y_test):
-        """Vẽ đường cong Precision-Recall"""
+        """Plot the Precision-Recall curve"""
         if self.model is None:
-            raise ValueError("Mô hình chưa được huấn luyện. Gọi build_and_train_models trước.")
+            raise ValueError("Model has not been trained. Call build_and_train_models first.")
 
-        # Nếu bài toán là phân loại nhị phân
+        # If it is a binary classification problem
         if len(self.class_names) == 2:
             y_pred_proba = self.model.predict_proba(X_test)[:, 1]
             precision, recall, _ = precision_recall_curve(y_test, y_pred_proba)
@@ -130,15 +130,15 @@ class ModelUtils:
             plt.close()
 
     def plot_feature_importance(self, feature_names):
-        """Vẽ biểu đồ tầm quan trọng của các đặc trưng"""
+        """Plot the importance of features"""
         if self.model is None:
-            raise ValueError("Mô hình chưa được huấn luyện. Gọi build_and_train_models trước.")
+            raise ValueError("Model has not been trained. Call build_and_train_models first.")
 
         importances = self.model.feature_importances_
         indices = np.argsort(importances)[::-1]
 
         plt.figure(figsize=(10, 8))
-        plt.title('The importance of features')
+        plt.title('Feature Importance')
         plt.bar(range(len(importances)), importances[indices], align='center')
         plt.xticks(range(len(importances)), [feature_names[i] for i in indices], rotation=90)
         plt.tight_layout()
@@ -147,9 +147,9 @@ class ModelUtils:
         plt.close()
 
     def plot_learning_curve(self, X_train, y_train, cv=5):
-        """Vẽ đường cong học tập"""
+        """Plot the learning curve"""
         if self.model is None:
-            raise ValueError("Mô hình chưa được huấn luyện. Gọi build_and_train_models trước.")
+            raise ValueError("Model has not been trained. Call build_and_train_models first.")
 
         train_sizes, train_scores, test_scores = learning_curve(
             self.model, X_train, y_train, cv=cv, n_jobs=-1,
@@ -162,8 +162,8 @@ class ModelUtils:
         test_scores_std = np.std(test_scores, axis=1)
 
         plt.figure(figsize=(10, 6))
-        plt.title('Learning curve')
-        plt.xlabel('Number of training samples')
+        plt.title('Learning Curve')
+        plt.xlabel('Number of Training Samples')
         plt.ylabel('Score')
         plt.grid()
 
@@ -171,15 +171,15 @@ class ModelUtils:
                          train_scores_mean + train_scores_std, alpha=0.1, color="r")
         plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
                          test_scores_mean + test_scores_std, alpha=0.1, color="g")
-        plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training score ")
-        plt.plot(train_sizes, test_scores_mean, 'o-', color="g", label="cross validation score")
+        plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training score")
+        plt.plot(train_sizes, test_scores_mean, 'o-', color="g", label="Cross-validation score")
         plt.legend(loc="best")
 
         self.plots['learning_curve'] = plt.gcf()
         plt.close()
 
     def save_all_plots(self, output_dir=None):
-        """Lưu tất cả các biểu đồ"""
+        """Save all plots"""
         if output_dir is None:
             output_dir = Config.OUTPUT_DIR
 
