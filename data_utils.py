@@ -11,21 +11,21 @@ from config import Config
 class DataUtils:
     def __init__(self, raw_data):
         self.raw_data = raw_data.copy()
-        # Chuẩn hóa tên cột: loại bỏ khoảng trắng và ký tự đặc biệt
+        # Normalize column names: remove spaces and special characters
         self.raw_data.columns = [self._clean_column_name(col) for col in self.raw_data.columns]
         self.processed_data = None
         self.numerical_features = []
         self.categorical_features = []
         self.target_column = self._find_target_column()
         self.plots = {}
-        self.scaler = RobustScaler()  # Thay đổi từ StandardScaler sang RobustScaler
+        self.scaler = RobustScaler()  # Changed from StandardScaler to RobustScaler
 
     def _clean_column_name(self, column_name):
-        """Làm sạch tên cột, loại bỏ khoảng trắng và chuyển thành chữ thường"""
+        """Clean column names by removing spaces and converting to lowercase"""
         return re.sub(r'[^a-zA-Z0-9_]', '', column_name.strip().lower())
 
     def _find_target_column(self):
-        """Tìm cột mục tiêu là 'loan_status' hoặc tương tự"""
+        """Find the target column, such as 'loan_status' or similar"""
         target_candidates = ['loan_status', 'loanstatus', 'status', 'approved']
         for col in self.raw_data.columns:
             if col.lower() in target_candidates:
@@ -33,13 +33,13 @@ class DataUtils:
         return None
 
     def analyze_dataset(self):
-        """Phân tích dữ liệu và tạo các biểu đồ thống kê"""
+        """Analyze data and create statistical plots"""
         if self.target_column:
-            print(f"   Đã phát hiện cột mục tiêu: {self.target_column}")
+            print(f"   Target column detected: {self.target_column}")
 
-            # Phân loại các đặc trưng
+            # Classify features
             for col in self.raw_data.columns:
-                if col == self.target_column or col == 'loan_id':  # Bỏ qua cột ID và cột mục tiêu
+                if col == self.target_column or col == 'loan_id':  # Ignore ID and target columns
                     continue
 
                 if self.raw_data[col].dtype == 'object' or self.raw_data[col].nunique() < 10:
@@ -47,18 +47,18 @@ class DataUtils:
                 else:
                     self.numerical_features.append(col)
 
-            # Tạo các biểu đồ phân tích
+            # Create analysis plots
             self._create_distribution_plots()
             self._create_correlation_matrix()
             self._create_target_analysis_plots()
         else:
-            print("   Không tìm thấy cột mục tiêu phù hợp.")
+            print("   No suitable target column found.")
 
     def _create_distribution_plots(self):
-        """Tạo biểu đồ phân bố cho các đặc trưng số"""
+        """Create distribution plots for numerical features"""
         plt.figure(figsize=(15, 10))
 
-        for i, feature in enumerate(self.numerical_features[:6]):  # Chỉ hiển thị tối đa 6 đặc trưng
+        for i, feature in enumerate(self.numerical_features[:6]):  # Show up to 6 features
             plt.subplot(2, 3, i + 1)
             sns.histplot(self.raw_data[feature], kde=True)
             plt.title(f'Distribution of {feature}')
@@ -68,7 +68,7 @@ class DataUtils:
         plt.close()
 
     def _create_correlation_matrix(self):
-        """Tạo ma trận tương quan giữa các đặc trưng số"""
+        """Create a correlation matrix for numerical features"""
         corr_matrix = self.raw_data[self.numerical_features].corr()
 
         plt.figure(figsize=(10, 8))
@@ -80,8 +80,8 @@ class DataUtils:
         plt.close()
 
     def _create_target_analysis_plots(self):
-        """Tạo các biểu đồ phân tích mối quan hệ giữa đặc trưng và biến mục tiêu"""
-        # Biểu đồ đếm cho biến mục tiêu
+        """Create plots analyzing relationships between features and the target variable"""
+        # Count plot for the target variable
         plt.figure(figsize=(8, 6))
         sns.countplot(x=self.target_column, data=self.raw_data)
         plt.title(f'Target variable distribution - {self.target_column}')
@@ -89,18 +89,18 @@ class DataUtils:
         self.plots['target_distribution'] = plt.gcf()
         plt.close()
 
-        # Biểu đồ boxplot cho top 4 đặc trưng số quan trọng
+        # Boxplots for the top 4 important numerical features
         plt.figure(figsize=(15, 10))
         for i, feature in enumerate(self.numerical_features[:4]):
             plt.subplot(2, 2, i + 1)
             sns.boxplot(x=self.target_column, y=feature, data=self.raw_data)
-            plt.title(f'{feature} theo {self.target_column}')
+            plt.title(f'{feature} by {self.target_column}')
         plt.tight_layout()
         self.plots['feature_target_relations'] = plt.gcf()
         plt.close()
 
     def save_plots(self, output_dir=None):
-        """Lưu các biểu đồ vào thư mục đầu ra"""
+        """Save plots to the output directory"""
         if output_dir is None:
             output_dir = Config.OUTPUT_DIR
 
@@ -110,50 +110,50 @@ class DataUtils:
             fig.savefig(os.path.join(output_dir, f'{name}.png'))
 
     def process_data(self):
-        """Xử lý và làm sạch dữ liệu"""
+        """Process and clean data"""
         df = self.raw_data.copy()
 
-        # Loại bỏ các hàng trùng lặp
+        # Remove duplicate rows
         df.drop_duplicates(inplace=True)
 
-        # Loại bỏ cột ID nếu có
+        # Drop ID column if present
         if 'loan_id' in df.columns:
             df.drop('loan_id', axis=1, inplace=True)
 
-        # Xử lý giá trị null
-        # Đối với đặc trưng số: điền bằng trung vị
+        # Handle missing values
+        # For numerical features: fill with median
         for feature in self.numerical_features:
             if df[feature].isnull().sum() > 0:
                 df[feature].fillna(df[feature].median(), inplace=True)
 
-        # Đối với đặc trưng phân loại: điền bằng giá trị phổ biến nhất
+        # For categorical features: fill with the most common value
         for feature in self.categorical_features:
             if df[feature].isnull().sum() > 0:
                 df[feature].fillna(df[feature].mode()[0], inplace=True)
 
-        # Mã hóa các đặc trưng phân loại
+        # Encode categorical features
         for feature in self.categorical_features:
             le = LabelEncoder()
             df[feature] = le.fit_transform(df[feature])
 
-        # Mã hóa biến mục tiêu nếu cần
+        # Encode the target variable if needed
         if df[self.target_column].dtype == 'object':
             le = LabelEncoder()
             df[self.target_column] = le.fit_transform(df[self.target_column])
 
-        # Chuẩn hóa các đặc trưng số
+        # Normalize numerical features
         num_features = [f for f in self.numerical_features if f in df.columns]
         if num_features:
             df[num_features] = self.scaler.fit_transform(df[num_features])
 
-        # Tạo các đặc trưng mới
+        # Create new features
         self._create_new_features(df)
 
         self.processed_data = df
         return df
 
     def _create_new_features(self, df):
-        """Tạo 5 đặc trưng mới theo yêu cầu"""
+        """Create 5 new features as required"""
         # 1. TOTAL_ASSETS
         df['total_assets'] = df['residential_assets_value'] + \
                              df['commercial_assets_value'] + \
@@ -167,7 +167,6 @@ class DataUtils:
         # 3. REPAYMENT_CAPACITY_INDEX
         df['repayment_capacity'] = (df['income_annum'] * 0.5 + df['total_assets'] * 0.3) / \
                                    (df['loan_amount'] / df['loan_term'] + 1e-6)
-        # cộng 1^-6 vào mẫu số để tránh chia cho 0 nếu mẫu số = 0 (vd 50/0 = error)
 
         # 4. LIQUID_ASSETS_RATIO
         df['liquid_ratio'] = (df['bank_asset_value'] + df['commercial_assets_value']) / \
@@ -176,21 +175,21 @@ class DataUtils:
         # 5. DEBT_TO_INCOME_DTI
         df['dti'] = df['loan_amount'] / (df['income_annum'] * df['loan_term'] + 1e-6)
 
-        # Chuẩn hóa các đặc trưng mới
+        # Normalize new features
         new_features = ['total_assets', 'debt_recovery_ratio', 'repayment_capacity', 'liquid_ratio', 'dti']
         df[new_features] = self.scaler.fit_transform(df[new_features])
 
-        # Thêm các đặc trưng mới vào danh sách đặc trưng số
+        # Add new features to numerical feature list
         self.numerical_features.extend(new_features)
 
     def select_features(self):
-        """Chọn các đặc trưng quan trọng nhất cho mô hình"""
+        """Select the most important features for the model"""
         if self.processed_data is None:
             self.process_data()
 
         df = self.processed_data
 
-        # Chọn các đặc trưng theo yêu cầu
+        # Select features
         selected_features = [
             'cibil_score',
             'total_assets',
@@ -204,20 +203,19 @@ class DataUtils:
             'no_of_dependents'
         ]
 
-        # Lọc các đặc trưng đã chọn chỉ từ những đặc trưng có trong dữ liệu
+        # Filter features that exist in the dataset
         selected_features = [f for f in selected_features if f in df.columns]
 
-        print(
-            f"   Đặc trưng được chọn ({len(selected_features)}/{len(df.columns) - 1}):  {', '.join(selected_features)}")
+        print(f"   Selected features ({len(selected_features)}/{len(df.columns) - 1}): {', '.join(selected_features)}")
 
-        # Tạo ma trận đặc trưng X và biến mục tiêu y
+        # Create feature matrix X and target variable y
         X = df[selected_features]
         y = df[self.target_column]
 
         return X, y, selected_features
 
     def split_data(self, X, y, test_size=0.2, random_state=42):
-        """Chia dữ liệu thành tập huấn luyện và kiểm tra (0.2 = 20%)"""
+        """Split data into training and test sets (0.2 = 20%)"""
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=test_size, random_state=random_state, stratify=y
         )

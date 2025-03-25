@@ -1,18 +1,17 @@
 import os
 
-
 class Config:
-    # Tạo các đường dẫn tương đối cho dự án
-    # Thư mục gốc chứa dự án
+    # Create relative paths for the project
+    # Root directory containing the project
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
     # Path to dataset
     DATA_FILE_PATH = os.path.join(ROOT_DIR, "loan_approval_dataset.csv")
 
-    # folder with output results
+    # Folder with output results
     OUTPUT_DIR = os.path.join(ROOT_DIR, "results")
 
-    # Config model
+    # Model configuration
     MODEL_CONFIG = {
         "random_forest": {
             "n_estimators": 100,
@@ -22,16 +21,16 @@ class Config:
             "random_state": 42,
             "class_weight": "balanced"
         },
-        # Có thể thêm cấu hình cho các mô hình khác ở đây
+        # Additional model configurations can be added here
     }
 
-    # config for spliting data
+    # Configuration for splitting data
     TRAIN_TEST_SPLIT = {
         "test_size": 0.2,
         "random_state": 42
     }
 
-    # config for plot graph
+    # Configuration for plotting graphs
     VISUALIZATION = {
         "figure_size_large": (12, 8),
         "figure_size_medium": (10, 6),
@@ -40,25 +39,25 @@ class Config:
         "cmap": "coolwarm"
     }
 
-    # Các thông số khác
+    # Other parameters
     RANDOM_STATE = 42
     NUM_CV_FOLDS = 5
 
     # Add 5 new features
     NEW_FEATURES_CONFIG = {
         "total_assets": {
-            "description": "Tổng giá trị tài sản hiện có của người vay."
+            "description": "Total value of the borrower's available assets."
         },
         "debt_recovery_ratio": {
-            "description": "Tỷ lệ tài sản thế chấp có thể thu hồi so với khoản vay."
+            "description": "Ratio of recoverable collateral assets compared to the loan."
         },
         "repayment_capacity": {
-            "description": "Chỉ số khả năng trả nợ kết hợp thu nhập và tài sản."
+            "description": "Repayment capacity index combining income and assets."
         },
         "liquid_ratio": {
-            "description": "Tỷ lệ tài sản thanh khoản cao trong tổng tài sản."
+            "description": "Ratio of highly liquid assets to total assets."
         },
         "dti": {
-            "description": "Tỷ lệ nợ trên tổng thu nhập tích lũy."
+            "description": "Debt-to-total accumulated income ratio."
         }
     }
