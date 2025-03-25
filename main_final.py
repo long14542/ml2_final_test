@@ -17,7 +17,7 @@ def main():
     # 1. Load the dataset
     print("1. Loading dataset...")
     try:
-        df = pd.read_csv(r"D:\Year3\ML2\GP\loan_approval_dataset.csv")
+        df = pd.read_csv(r"C:\Users\admin\Downloads\loan prediction dataset\loan_approval_dataset.csv")
         print(f"   Successfully loaded: {df.shape[0]} rows x {df.shape[1]} columns")
         print("   Column names:", ", ".join([f" {col}" for col in df.columns]))
     except Exception as e:

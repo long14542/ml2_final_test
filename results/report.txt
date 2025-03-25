@@ -1,5 +1,5 @@
 === LOAN ANALYSIS AND PREDICTION REPORT ===
-Generated on: 2025-03-25 13:03:57
+Generated on: 2025-03-25 13:21:42
 
 Dataset size: 4269 rows x 13 columns
 Selected features: cibil_score, total_assets, debt_recovery_ratio, repayment_capacity, dti, liquid_ratio, income_annum, loan_amount, loan_term, no_of_dependents
